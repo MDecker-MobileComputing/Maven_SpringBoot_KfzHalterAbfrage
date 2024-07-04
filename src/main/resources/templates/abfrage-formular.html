@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Abfrage KFZ-Kennzeichen mit REST-Client von Spring Boot</title>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="restclient.css">
+</head>
+<body>
+
+  <h1>Abfrage KFZ-Kennzeichen mit REST-Client von <i>Spring Boot</i></h1>
+
+  <form action="/app/abfrage-kennzeichen"
+        method="get"
+        th:object="${suchfelder}" >
+
+    <input type="text"
+           name="feld1"
+           th:field="*{feld1}"
+           required="required"
+           size="3"
+           pattern="[A-Za-z]{1,3}"
+           placeholder="BAD" >
+
+    <input type="text"
+           name="feld2"
+           th:field="*{feld2}"
+           required="required"
+           size="2"
+           pattern="[A-Za-z]{1,2}"
+           placeholder="E" >
+
+    <input type="number"
+           name="feld3"
+           th:field="*{feld3}"
+           min="1"
+           max="9999"
+           required="required"
+           placeholder="1234" >
+
+    <br><br>
+
+    <input type="submit" value="Suchen"       >
+    <input type="reset"  value="Zurücksetzen" >
+
+  </form>
+
+</body>
