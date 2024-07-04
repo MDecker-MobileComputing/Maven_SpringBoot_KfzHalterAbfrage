@@ -52,25 +52,13 @@ public class KfzKennzeichenAbfrageService {
 
         final String pfad = "/api/v1/abfrage/" + kfzKennzeichen;
 
-        ResponseSpec responseSpec = _restClient.get().uri( pfad ).retrieve();
+        ResponseEntity<String> responseEntity  = 
+                                    _restClient.get()
+                                               .uri( pfad )
+                                               .retrieve()
+                                               .toEntity( String.class );
 
-        ResponseEntity<Void> responseEntityVoid = responseSpec.toBodilessEntity();
-
-        HttpStatusCode statusCode = responseEntityVoid.getStatusCode();
-        LOG.info( "Status-Code von REST-Request " + pfad + ": " + statusCode );
-
-        if ( statusCode.is2xxSuccessful() ) {
-
-            String ergebnisString = responseSpec.body( String.class );
-            return Optional.of( ergebnisString );
-
-        } else {
-
-            throw new KfzKennzeichenException(
-                         "Fehler bei REST-Anfrage für KFZ-Kennzeichen-Abfrage: " +
-                         responseEntityVoid.getStatusCode()
-                      );
-        }
+        return Optional.of( responseEntity.getBody() );
     }
 
 }
