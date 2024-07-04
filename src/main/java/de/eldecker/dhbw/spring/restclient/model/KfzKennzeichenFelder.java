@@ -14,6 +14,7 @@ package de.eldecker.dhbw.spring.restclient.model;
 public record KfzKennzeichenFelder( String feld1, 
                                     String feld2, 
                                     String feld3 ) {    
+    
     /**
      * Baut KFZ-Kennzeichen aus den drei Feldern zusammen.
      * 
