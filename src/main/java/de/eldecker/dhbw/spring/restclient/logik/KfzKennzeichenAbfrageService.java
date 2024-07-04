@@ -1,15 +1,15 @@
 package de.eldecker.dhbw.spring.restclient.logik;
 
+import static java.util.Optional.empty;
+import static org.springframework.http.HttpStatus.NOT_FOUND; 
+
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClient.ResponseSpec;
+import org.springframework.web.client.RestClientResponseException;
 
 import de.eldecker.dhbw.spring.restclient.model.KfzKennzeichenException;
 
@@ -21,7 +21,6 @@ import de.eldecker.dhbw.spring.restclient.model.KfzKennzeichenException;
 @Service
 public class KfzKennzeichenAbfrageService {
 
-    private static final Logger LOG = LoggerFactory.getLogger( KfzKennzeichenAbfrageService.class );
 
     /** Objekt für REST-Calls. */
     private final RestClient _restClient;
@@ -52,13 +51,28 @@ public class KfzKennzeichenAbfrageService {
 
         final String pfad = "/api/v1/abfrage/" + kfzKennzeichen;
 
-        ResponseEntity<String> responseEntity  = 
-                                    _restClient.get()
-                                               .uri( pfad )
-                                               .retrieve()
-                                               .toEntity( String.class );
+        try {
+            
+            ResponseEntity<String> responseEntity  = 
+                                        _restClient.get()
+                                                   .uri( pfad )
+                                                   .retrieve()
+                                                   .toEntity( String.class );
+    
+            return Optional.of( responseEntity.getBody() );
+        }
+        catch ( RestClientResponseException ex ) {
 
-        return Optional.of( responseEntity.getBody() );
+            if ( ex.getStatusCode().equals( NOT_FOUND ) ) {
+
+                return empty();
+                
+            } else {
+
+                throw new KfzKennzeichenException( 
+                        "Fehler bei Abfrage KFZ-Kennzeichen: " + ex.getStatusCode() );
+            }
+        }
     }
 
 }

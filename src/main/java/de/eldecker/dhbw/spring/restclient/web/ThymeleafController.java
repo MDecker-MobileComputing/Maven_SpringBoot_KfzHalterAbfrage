@@ -80,7 +80,7 @@ public class ThymeleafController {
             
             if ( ergebnisOptional.isEmpty() ) {
                 
-                ergebnisText = "KFZ-Kennzeichen \"" + kfzKennzeichenFelder + "\" nicht gefunden";
+                ergebnisText = "KFZ-Kennzeichen \"" + kfzKennzeichenFelder + "\" nicht gefunden.";
                 
             } else {
                 
@@ -90,7 +90,7 @@ public class ThymeleafController {
         catch ( KfzKennzeichenException ex ) {
             
             ergebnisText = "Fehler bei Abfrage von KFZ-Kennzeichen aufgetreten: " + ex.getMessage();              
-            LOG.error( ergebnisText, ex );            
+            LOG.error( ergebnisText );            
         }
                 
         model.addAttribute( "ergebnis", ergebnisText );
