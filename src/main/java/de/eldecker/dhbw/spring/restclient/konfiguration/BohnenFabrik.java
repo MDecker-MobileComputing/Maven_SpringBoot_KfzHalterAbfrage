@@ -1,4 +1,4 @@
-package de.eldecker.dhbw.spring.restclient.helferlein;
+package de.eldecker.dhbw.spring.restclient.konfiguration;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
@@ -10,6 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
 
+/**
+ * Konfig-Klasse, die Methoden enthält, die Beans bereitstellt. 
+ */
 @Configurable
 public class BohnenFabrik {
 
@@ -21,5 +24,6 @@ public class BohnenFabrik {
                 .enable(  INDENT_OUTPUT              ) // Schöne Ausgabe beim Serialisieren von Objekten in JSON
                 .build();
     }
+    
 }
 

@@ -22,10 +22,10 @@ public record KfzHalter( String anrede,
         
         StringBuilder sb = new StringBuilder();
         
-        sb.append( anrede    ).append( " " )
-          .append( vorname   ).append( " " ).append( nachname ).append( ", " )
+        sb.append( anrede    ).append( " "  )
+          .append( vorname   ).append( " "  ).append( nachname ).append( ", " )
           .append( anschrift ).append( ", " )
-          .append( plz       ).append( " " ).append( wohnort );
+          .append( plz       ).append( " "  ).append( wohnort );
         
         return sb.toString();
     }
