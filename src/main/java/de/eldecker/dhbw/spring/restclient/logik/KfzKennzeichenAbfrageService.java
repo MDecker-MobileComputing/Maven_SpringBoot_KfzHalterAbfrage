@@ -121,8 +121,8 @@ public class KfzKennzeichenAbfrageService {
      * <br><br>
      *
      * Bedeutung des Cron-Ausdrucks: An Arbeitstagen (Montag bis einschl. 
-     * Freitag) zwischen 8 und 18 Uhr alle 5 Minuten ausführen
-     */        
+     * Freitag) zwischen 8 und 18 Uhr alle 3 Minuten ausführen
+     */            
     @Scheduled( cron = "0 */3 8-18 * * MON-FRI" )
     @CacheEvict( value = "kfzHalterCache", allEntries = true )
     public void cacheLoeschen() {
