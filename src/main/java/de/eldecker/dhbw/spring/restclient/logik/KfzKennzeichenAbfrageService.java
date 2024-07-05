@@ -19,9 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.eldecker.dhbw.spring.restclient.model.KfzHalter;
 import de.eldecker.dhbw.spring.restclient.model.KfzKennzeichenException;
 
@@ -39,22 +36,16 @@ public class KfzKennzeichenAbfrageService {
     /** Objekt für REST-Calls. */
     private final RestClient _restClient;
 
-    /** Objekt für Deserialisierung von JSON nach Java-Objekt. */
-    private final ObjectMapper _objectMapper;
-
-
+    
     /**
-     * Konstruktor für Erzeugung {@code RestClient}-Objekt mit Basis-URL {@code http://localhost:8080}
-     * und um {@code ObjectMapper}-Bean über <i>Dependency Injection</i> zu holen.
+     * Konstruktor für Erzeugung {@code RestClient}-Objekt mit 
+     * Basis-URL {@code http://localhost:8080}. 
      */
     @Autowired
-    public KfzKennzeichenAbfrageService ( RestClient.Builder restClientBuilder,
-                                          ObjectMapper objectMapper ) {
-
+    public KfzKennzeichenAbfrageService ( RestClient.Builder restClientBuilder ) {
+                                          
         _restClient = restClientBuilder.baseUrl( "http://localhost:8080" )
                                        .build();
-
-        _objectMapper = objectMapper;
     }
 
 
@@ -74,24 +65,18 @@ public class KfzKennzeichenAbfrageService {
                 backoff     = @Backoff( delay = 500 ),
                 listeners   = "meinRetryListener" )
     public Optional<KfzHalter> kfzKennzeichenAbfragen( String kfzKennzeichen )
-           throws KfzKennzeichenException {
+                                                  throws KfzKennzeichenException {
 
         final String pfad = "/api/v1/abfrage/" + kfzKennzeichen;
         LOG.info( "Pfad für REST-Request: " + pfad );
 
         try {
 
-            ResponseEntity<String> responseEntity  =
-                                        _restClient.get()
-                                                   .uri( pfad )
-                                                   .retrieve()
-                                                   .toEntity( String.class );
-
-            String jsonString = responseEntity.getBody();
-
-            KfzHalter kfzHalter = _objectMapper.readValue( jsonString,
-                                                           KfzHalter.class );
-            return Optional.of( kfzHalter );
+            ResponseEntity<KfzHalter> responseEntity = _restClient.get()                                       
+                                                                  .uri( pfad )
+                                                                  .retrieve()
+                                                                  .toEntity( KfzHalter.class );
+            return Optional.of( responseEntity.getBody() );
         }
         catch ( RestClientResponseException ex ) {
 
@@ -106,15 +91,6 @@ public class KfzKennzeichenAbfrageService {
                 throw new KfzKennzeichenException(
                         "Fehler bei Abfrage KFZ-Kennzeichen: " + ex.getStatusCode() );
             }
-        }
-        catch ( JsonProcessingException ex ) {
-
-            LOG.error( "Exception bei Deserialisierung Antwort von REST-Abfrage: " +
-                       ex.getMessage() );
-
-            throw new KfzKennzeichenException(
-                    "JSON-Payload mit KFZ-Halter konnte nicht deserialisiert werden: " +
-                    ex.getMessage() );
         }
     }
 

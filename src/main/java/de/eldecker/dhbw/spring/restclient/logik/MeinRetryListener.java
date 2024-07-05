@@ -32,6 +32,7 @@ class MeinRetryListener implements RetryListener {
     public <T, E extends Throwable> void close( RetryContext context, 
                                                 RetryCallback<T, E> callback, 
                                                 Throwable throwable ) {
-    }
-    
+    }    
 }
+
+
