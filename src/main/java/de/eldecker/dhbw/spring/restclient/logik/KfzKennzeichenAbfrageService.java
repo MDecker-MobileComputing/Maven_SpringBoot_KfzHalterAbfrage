@@ -36,14 +36,14 @@ public class KfzKennzeichenAbfrageService {
     /** Objekt für REST-Calls. */
     private final RestClient _restClient;
 
-    
+
     /**
-     * Konstruktor für Erzeugung {@code RestClient}-Objekt mit 
-     * Basis-URL {@code http://localhost:8080}. 
+     * Konstruktor für Erzeugung {@code RestClient}-Objekt mit
+     * Basis-URL {@code http://localhost:8080}.
      */
     @Autowired
     public KfzKennzeichenAbfrageService ( RestClient.Builder restClientBuilder ) {
-                                          
+
         _restClient = restClientBuilder.baseUrl( "http://localhost:8080" )
                                        .build();
     }
@@ -59,9 +59,9 @@ public class KfzKennzeichenAbfrageService {
      * @throws KfzKennzeichenException Fehler bei REST-Call, z.B. HTTP-Status-Code 500
      *         von Client oder Fehler bei Deserialisierung von JSON.
      */
-    @Cacheable
-    @Retryable( retryFor    = KfzKennzeichenException.class, 
-                maxAttempts = 2, 
+    @Cacheable( value = "kfzHalterCache" )
+    @Retryable( retryFor    = KfzKennzeichenException.class,
+                maxAttempts = 2,
                 backoff     = @Backoff( delay = 500 ),
                 listeners   = "meinRetryListener" )
     public Optional<KfzHalter> kfzKennzeichenAbfragen( String kfzKennzeichen )
@@ -72,7 +72,7 @@ public class KfzKennzeichenAbfrageService {
 
         try {
 
-            ResponseEntity<KfzHalter> responseEntity = _restClient.get()                                       
+            ResponseEntity<KfzHalter> responseEntity = _restClient.get()
                                                                   .uri( pfad )
                                                                   .retrieve()
                                                                   .toEntity( KfzHalter.class );
@@ -94,15 +94,15 @@ public class KfzKennzeichenAbfrageService {
         }
     }
 
-    
+
     /**
      * Wenn diese Methode aufgerufen wird, dann wird der Cache gelöscht.
      * Wir lassen die Methode regelmäßig von einem Scheduler aufrufen.
      * <br><br>
      *
-     * Bedeutung des Cron-Ausdrucks: An Arbeitstagen (Montag bis einschl. 
+     * Bedeutung des Cron-Ausdrucks: An Arbeitstagen (Montag bis einschl.
      * Freitag) zwischen 8 und 18 Uhr alle 3 Minuten ausführen
-     */            
+     */
     @Scheduled( cron = "0 */3 8-18 * * MON-FRI" )
     @CacheEvict( value = "kfzHalterCache", allEntries = true )
     public void cacheLoeschen() {
