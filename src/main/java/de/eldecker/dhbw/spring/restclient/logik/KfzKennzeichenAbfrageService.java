@@ -68,7 +68,7 @@ public class KfzKennzeichenAbfrageService {
                                                   throws KfzKennzeichenException {
 
         final String pfad = "/api/v1/abfrage/" + kfzKennzeichen;
-        LOG.info( "Pfad für REST-Request: " + pfad );
+        LOG.info( "Pfad für REST-Request: {}", pfad );
 
         try {
 
