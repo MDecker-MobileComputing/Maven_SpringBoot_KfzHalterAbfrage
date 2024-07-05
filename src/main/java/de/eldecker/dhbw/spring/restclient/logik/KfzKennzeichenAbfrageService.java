@@ -9,8 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
@@ -41,7 +43,7 @@ public class KfzKennzeichenAbfrageService {
 
     /**
      * Konstruktor für Erzeugung {@code RestClient}-Objekt mit Basis-URL {@code http://localhost:8080}
-     * und um {@code ObjectMapper}-Bean über <i>Dependency Injection</i> zu holen.  
+     * und um {@code ObjectMapper}-Bean über <i>Dependency Injection</i> zu holen.
      */
     @Autowired
     public KfzKennzeichenAbfrageService ( RestClient.Builder restClientBuilder,
@@ -64,6 +66,8 @@ public class KfzKennzeichenAbfrageService {
      * @throws KfzKennzeichenException Fehler bei REST-Call, z.B. HTTP-Status-Code 500
      *         von Client oder Fehler bei Deserialisierung von JSON.
      */
+
+
     @Cacheable
     public Optional<KfzHalter> kfzKennzeichenAbfragen( String kfzKennzeichen )
            throws KfzKennzeichenException {
@@ -108,6 +112,22 @@ public class KfzKennzeichenAbfrageService {
                     "JSON-Payload mit KFZ-Halter konnte nicht deserialisiert werden: " +
                     ex.getMessage() );
         }
+    }
+
+    
+    /**
+     * Wenn diese Methode aufgerufen wird, dann wird der Cache gelöscht.
+     * Wir lassen die Methode regelmäßig von einem Scheduler aufrufen.
+     * <br><br>
+     *
+     * Bedeutung des Cron-Ausdrucks: An Arbeitstagen (Montag bis einschl. 
+     * Freitag) zwischen 8 und 18 Uhr alle 5 Minuten ausführen
+     */        
+    @Scheduled( cron = "0 */3 8-18 * * MON-FRI" )
+    @CacheEvict( value = "kfzHalterCache", allEntries = true )
+    public void cacheLoeschen() {
+
+        LOG.info( "Der Cache wurde geleert." );
     }
 
 }
