@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import de.eldecker.dhbw.spring.restclient.logik.KfzKennzeichenAbfrageService;
+import de.eldecker.dhbw.spring.restclient.model.KfzHalter;
 import de.eldecker.dhbw.spring.restclient.model.KfzKennzeichenException;
 import de.eldecker.dhbw.spring.restclient.model.KfzKennzeichenFelder;
 
@@ -73,18 +74,21 @@ public class ThymeleafController {
         
         String ergebnisText = "";
         
-        Optional<String> ergebnisOptional = null;
+        Optional<KfzHalter> kfzHalterOptional = null;
         try {
         
-            ergebnisOptional =_kfzKennzeichenService.kfzKennzeichenAbfragen( kfzKennzeichenFelder.toString() );
+            kfzHalterOptional = 
+                    _kfzKennzeichenService.kfzKennzeichenAbfragen( 
+                            kfzKennzeichenFelder.toString() 
+                    );
             
-            if ( ergebnisOptional.isEmpty() ) {
+            if ( kfzHalterOptional.isEmpty() ) {
                 
                 ergebnisText = "KFZ-Kennzeichen \"" + kfzKennzeichenFelder + "\" nicht gefunden.";
                 
             } else {
                 
-                ergebnisText = ergebnisOptional.get();
+                ergebnisText = kfzHalterOptional.get().toString();
             }
         }
         catch ( KfzKennzeichenException ex ) {
