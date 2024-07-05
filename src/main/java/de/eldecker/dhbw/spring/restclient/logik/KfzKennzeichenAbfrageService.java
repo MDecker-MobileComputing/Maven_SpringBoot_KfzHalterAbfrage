@@ -12,6 +12,8 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -66,9 +68,11 @@ public class KfzKennzeichenAbfrageService {
      * @throws KfzKennzeichenException Fehler bei REST-Call, z.B. HTTP-Status-Code 500
      *         von Client oder Fehler bei Deserialisierung von JSON.
      */
-
-
     @Cacheable
+    @Retryable( retryFor    = KfzKennzeichenException.class, 
+                maxAttempts = 2, 
+                backoff     = @Backoff( delay = 500 ),
+                listeners   = "meinRetryListener" )
     public Optional<KfzHalter> kfzKennzeichenAbfragen( String kfzKennzeichen )
            throws KfzKennzeichenException {
 
