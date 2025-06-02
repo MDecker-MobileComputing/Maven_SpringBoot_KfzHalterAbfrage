@@ -36,6 +36,9 @@ public class KfzKennzeichenAbfrageService {
 
     /** Objekt für REST-Calls. */
     private final RestClient _restClient;
+    
+    /** Zähler für Entleerungen des Caches für die Abfrage-Ergebnisse. */ 
+    private int cacheEntleerungsZaehler = 0;
 
 
     /**
@@ -115,8 +118,9 @@ public class KfzKennzeichenAbfrageService {
     @Scheduled( cron = "0 */3 8-18 * * MON-FRI" )
     @CacheEvict( value = "kfzHalterCache", allEntries = true )
     public void cacheLoeschen() {
-
-        LOG.info( "Der Cache wurde geleert." );
+    	
+    	cacheEntleerungsZaehler++;
+        LOG.info( "Der Cache wurde geleert ({}).", cacheEntleerungsZaehler );
     }
 
 }
