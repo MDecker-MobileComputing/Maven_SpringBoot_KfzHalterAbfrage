@@ -14,11 +14,11 @@
     </parent>
 
     <groupId>de.eldecker.dhbw.spring</groupId>
-    <artifactId>restclient</artifactId>
+    <artifactId>kfzhalterabfrage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <name>REST-Client</name>
-    <description>REST-Client im Backend</description>
+    <description>REST-Client für Abfrage KFZ-Halter von anderem Microservice</description>
 
     <properties>
         <java.version>21</java.version>
