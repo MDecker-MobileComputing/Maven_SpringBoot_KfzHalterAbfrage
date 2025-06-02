@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
+import de.eldecker.dhbw.spring.restclient.konfiguration.RetryConfig;
 import de.eldecker.dhbw.spring.restclient.model.KfzHalter;
 import de.eldecker.dhbw.spring.restclient.model.KfzKennzeichenException;
 
@@ -42,7 +43,7 @@ public class KfzKennzeichenAbfrageService {
      * Basis-URL {@code http://localhost:8080}.
      */
     @Autowired
-    public KfzKennzeichenAbfrageService ( RestClient.Builder restClientBuilder ) {
+    public KfzKennzeichenAbfrageService( RestClient.Builder restClientBuilder ) {
 
         _restClient = restClientBuilder.baseUrl( "http://localhost:8080" )
                                        .build();
@@ -51,13 +52,18 @@ public class KfzKennzeichenAbfrageService {
 
     /**
      * Abfrage KFZ-Kennzeichen von externer API.
+     * <br><br>
+     * 
+     * Methode cacht Rückgabewerte und führt bei Fehlern während HTTP-Calls
+     * auch automatische Retries durch; siehe hierzu auch die Konfig-Beans
+     * {@link RetryConfig} und {@link CacheConfig}.
      *
      * @param kfzKennzeichen Abzufragendes KFZ-Kennzeichen
      *
      * @return Optional enthält Infos über KFZ-Halter wenn gefunden, sonst leer.
      *
-     * @throws KfzKennzeichenException Fehler bei REST-Call, z.B. HTTP-Status-Code 500
-     *         von Client oder Fehler bei Deserialisierung von JSON.
+     * @throws KfzKennzeichenException Fehler bei REST-Call, z.B. HTTP-Status-Code 
+     *         500 von Client oder Fehler bei Deserialisierung von JSON.
      */
     @Cacheable( value = "kfzHalterCache" )
     @Retryable( retryFor    = KfzKennzeichenException.class,
@@ -101,7 +107,10 @@ public class KfzKennzeichenAbfrageService {
      * <br><br>
      *
      * Bedeutung des Cron-Ausdrucks: An Arbeitstagen (Montag bis einschl.
-     * Freitag) zwischen 8 und 18 Uhr alle 3 Minuten ausführen
+     * Freitag) zwischen 8 und 18 Uhr alle 3 Minuten ausführen.
+     * <br><br>
+     * 
+     * Siehe auch Klasse {@link SchedulerConfig}.
      */
     @Scheduled( cron = "0 */3 8-18 * * MON-FRI" )
     @CacheEvict( value = "kfzHalterCache", allEntries = true )
