@@ -10,29 +10,27 @@ import org.springframework.stereotype.Component;
 
 @Component
 class MeinRetryListener implements RetryListener {
-    
+
     private static final Logger logger = LoggerFactory.getLogger( MeinRetryListener.class );
 
-    
+
     @Override
-    public <T, E extends Throwable> boolean open( RetryContext context, 
+    public <T, E extends Throwable> boolean open( RetryContext context,
                                                   RetryCallback<T, E> callback ) {
         return true;
     }
 
     @Override
-    public <T, E extends Throwable> void onError( RetryContext context, 
-                                                  RetryCallback<T, E> callback, 
+    public <T, E extends Throwable> void onError( RetryContext context,
+                                                  RetryCallback<T, E> callback,
                                                   Throwable throwable ) {
 
         logger.info( "Versuch Nr. " + context.getRetryCount() );
     }
 
     @Override
-    public <T, E extends Throwable> void close( RetryContext context, 
-                                                RetryCallback<T, E> callback, 
+    public <T, E extends Throwable> void close( RetryContext context,
+                                                RetryCallback<T, E> callback,
                                                 Throwable throwable ) {
-    }    
+    }
 }
-
-
