@@ -15,7 +15,9 @@ public record KfzHalter( String anrede,
     /**
      * Gibt String für Anzeige mit KFZ-Halter-Daten zurück.
      * 
-     * @return String mit allen Attribute, für Anzeige auf UI
+     * @return String mit allen Attribute, für Anzeige auf UI.
+     *         Beispielwert: 
+     *         </i>Herr Dr. Jan Mustermeyer, Bahnhofstraße 5, 76532 Baden-Baden</i>              
      */
     @Override
     public String toString() {
